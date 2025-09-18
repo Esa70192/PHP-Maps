@@ -13,6 +13,7 @@ try {
     $tablas = $stmt->fetchALL(PDO::FETCH_COLUMN);
 
     $conexionExitosa = true;
+
 } catch (PDOException $e) {
     $conexionExitosa = false;
     $errorMensaje = $e->getMessage();
@@ -25,64 +26,34 @@ if($tablaSeleccionada && in_array($tablaSeleccionada,$tablas)){
     $stmt = $conn->prepare("SELECT * FROM `$tablaSeleccionada` LIMIT 100");
     $stmt->execute();
     $datos = $stmt->fetchALL(PDO::FETCH_ASSOC);
+    $sql = "SELECT LATITUD, LONGITUD FROM `$tablaSeleccionada`";
+    $result = $conn -> query($sql);
+    $puntos = [];
+
+    while($row = $result->fetch(PDO::FETCH_ASSOC)){
+        $puntos[] = $row;
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode($puntos);
 }
 ?>
 
-<?php if ($datos && isset($datos[0]['latitud']) && isset($datos[0]['longitud'])): ?>
-    <h2>Mapa de puntos (<?= htmlspecialchars($tablaSeleccionada) ?>)</h2>
-    <div id="map" style="height: 500px; width: 100%;"></div>
 
-    <script>
-        const puntos = <?= json_encode($datos) ?>;
-
-        function initMap() {
-            const centro = {
-                lat: parseFloat(puntos[0].latitud),
-                lng: parseFloat(puntos[0].longitud)
-            };
-
-            const mapa = new google.maps.Map(document.getElementById('map'), {
-                zoom: 5,
-                center: centro
-            });
-
-            puntos.forEach(punto => {
-                if (!punto.latitud || !punto.longitud) return;
-
-                const marcador = new google.maps.Marker({
-                    position: {
-                        lat: parseFloat(punto.latitud),
-                        lng: parseFloat(punto.longitud)
-                    },
-                    map: mapa,
-                    title: `ID: ${punto.id ?? ''}`
-                });
-
-                const info = new google.maps.InfoWindow({
-                    content: `<strong>ID:</strong> ${punto.id ?? 'N/A'}<br><strong>Lat:</strong> ${punto.latitud}<br><strong>Lng:</strong> ${punto.longitud}`
-                });
-
-                marcador.addListener('click', () => {
-                    info.open(mapa, marcador);
-                });
-            });
-        }
-    </script>
-
-    <!-- Tu clave API de Google Maps -->
-    <script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap">
-    </script>
-<?php endif; ?>
 
 
 
 <!DOCTYPE html>
 <html lang="es">
 
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.18.0/maps/maps-web.min.js"></script>
+    <link rel="stylesheet" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.18.0/maps/maps.css">
+    <style>
+        #map { width: 100%; height: 500px; }
+    </style>
     <title>Conexion a BD</title>
 </head>
 
@@ -132,6 +103,33 @@ if($tablaSeleccionada && in_array($tablaSeleccionada,$tablas)){
     <?php elseif ($tablaSeleccionada): ?>
         <p>No hay datos para mostrar en esta tabla.</p>
     <?php endif; ?>
+
+    <h2>Mapa con TomTom y PHP</h2>
+    <div id="map"></div>
+
+    <script>
+        // Inicia el mapa
+        const map = tt.map({
+            key: 'dnFFEblgizXhxa7tXsNLdLT3cA7IKR0Y',
+            container: 'map',
+            center: [19.40771965424571, -99.18955248149084], 
+            zoom: 5
+        });
+
+        // Agrega controles
+        map.addControl(new tt.NavigationControl());
+
+        // Cargar los puntos desde PHP
+        fetch('get-points.php')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(punto => {
+                    new tt.Marker()
+                        .setLngLat([punto.lng, punto.lat])
+                        .addTo(map);
+                });
+            });
+    </script>
 
 </body>
 
