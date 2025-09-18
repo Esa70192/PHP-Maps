@@ -26,12 +26,60 @@ if($tablaSeleccionada && in_array($tablaSeleccionada,$tablas)){
     $stmt->execute();
     $datos = $stmt->fetchALL(PDO::FETCH_ASSOC);
 }
-
-
 ?>
+
+<?php if ($datos && isset($datos[0]['latitud']) && isset($datos[0]['longitud'])): ?>
+    <h2>Mapa de puntos (<?= htmlspecialchars($tablaSeleccionada) ?>)</h2>
+    <div id="map" style="height: 500px; width: 100%;"></div>
+
+    <script>
+        const puntos = <?= json_encode($datos) ?>;
+
+        function initMap() {
+            const centro = {
+                lat: parseFloat(puntos[0].latitud),
+                lng: parseFloat(puntos[0].longitud)
+            };
+
+            const mapa = new google.maps.Map(document.getElementById('map'), {
+                zoom: 5,
+                center: centro
+            });
+
+            puntos.forEach(punto => {
+                if (!punto.latitud || !punto.longitud) return;
+
+                const marcador = new google.maps.Marker({
+                    position: {
+                        lat: parseFloat(punto.latitud),
+                        lng: parseFloat(punto.longitud)
+                    },
+                    map: mapa,
+                    title: `ID: ${punto.id ?? ''}`
+                });
+
+                const info = new google.maps.InfoWindow({
+                    content: `<strong>ID:</strong> ${punto.id ?? 'N/A'}<br><strong>Lat:</strong> ${punto.latitud}<br><strong>Lng:</strong> ${punto.longitud}`
+                });
+
+                marcador.addListener('click', () => {
+                    info.open(mapa, marcador);
+                });
+            });
+        }
+    </script>
+
+    <!-- Tu clave API de Google Maps -->
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap">
+    </script>
+<?php endif; ?>
+
+
 
 <!DOCTYPE html>
 <html lang="es">
+
 
 <head>
     <meta charset="UTF-8">
