@@ -1,27 +1,36 @@
 <?php
-// Configuración de conexión
-$host = 'localhost';
-$dbname = 'capas';
-$user = 'root';
-$pass = '';
+// Conexión a la base de datos (PDO)
+$host = "localhost";
+$dbname = "capas";
+$user = "root";
+$pass = "";
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Obtener todas las tablas
     $stmt = $conn->query("SHOW TABLES");
-    $tablas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $tablas = $stmt->fetchALL(PDO::FETCH_COLUMN);
 
     $conexionExitosa = true;
 } catch (PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
+    $conexionExitosa = false;
+    $errorMensaje = $e->getMessage();
 }
 
+//TABLA
+$tablaSeleccionada = $_POST['tabla'] ?? null;
+$datos = [];
+
+if($tablaSeleccionada && in_array($tablaSeleccionada,$tablas)){
+    $stmt = $conn->prepare("SELECT * FROM `$tablaSeleccionada` ");
+    $stmt->execute();
+    $datos = $stmt->fetchALL(PDO::FETCH_ASSOC);
+}
+
+//MAPA
 $tablasConCoords = [];
 $coordenadas = [];
-
-$tablaSeleccionada = $_POST['tabla'] ?? ($tablas[0] ?? null);
 $campoId = '';
 $campoLat = '';
 $campoLng = '';
@@ -60,13 +69,20 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
         $coordenadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
+
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
-    <meta charset="utf-8">
-    <title>Mapa con IDs desde MySQL</title>
+    <meta charset="UTF-8">
+    <title>JUNTOS</title>
+    
+    <!--CC TABLA-->
+    <link rel="stylesheet" href="estilo.css">
+
+    <!--MAPA-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- SDK de TomTom -->
@@ -92,25 +108,85 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
         }
     </style>
 </head>
+
 <body>
+    <!--TABLA BD-->
+    <h1>Tablas</h1>
 
-<h2>Mapa con Marcadores desde Tabla: <em><?= htmlspecialchars($tablaSeleccionada) ?></em></h2>
+    <style>
+   .scroll-box {
+    width: 400px;      
+    height: 200px;    
+    overflow: auto;    /* Scroll tanto vertical como horizontal */
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+  }
 
-<form method="POST" style="margin-bottom: 1rem;">
-    <label for="tabla">Seleccionar tabla:</label>
-    <select name="tabla" id="tabla" onchange="this.form.submit()">
-        <?php foreach ($tablas as $tabla): ?>
-            <option value="<?= $tabla ?>" <?= $tabla === $tablaSeleccionada ? 'selected' : '' ?>>
-                <?= $tabla ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
-</form>
+  table {
+    border-collapse: collapse;
+    width: 600px; /* Hacemos la tabla más ancha para que salga scroll horizontal */
+  }
+
+  th, td {
+    border: 1px solid #888;
+    padding: 8px;
+    text-align: left;
+  }
+</style>
+  
+    <?php if ($conexionExitosa): ?>
+        <p style="color: green;">¡Conexión exitosa!</p>
+    <?php else: ?>
+        <p style="color: red;">Error al conectar: <?= $errorMensaje ?></p>
+    <?php endif; ?>
+
+    <form method="post">
+        <label for="tabla">Tablas:</label>
+        <select name="tabla" id="tabla" required>
+            <option value="">-- Selecciona una tabla --</option>
+            <?php foreach ($tablas as $tabla): ?>
+                <option value="<?= htmlspecialchars($tabla) ?>" <?= ($tabla === $tablaSeleccionada) ? "selected" : "" ?>>
+                    <?= htmlspecialchars($tabla) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <button type="submit">Mostrar datos</button>
+    </form>
+ 
+    <?php if ($datos): ?>
+    <h2 class="datostabla">Datos de la tabla <?= htmlspecialchars($tablaSeleccionada) ?></h2>
+<div class="tabla">   
+        <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+                <tr>
+                    <?php foreach (array_keys($datos[0]) as $columna): ?>
+                        <th><?= htmlspecialchars($columna) ?></th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($datos as $fila): ?>
+                    <tr>
+                        <?php foreach ($fila as $valor): ?>
+                            <td><?= htmlspecialchars($valor) ?></td>
+                        <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php elseif ($tablaSeleccionada): ?>
+        <p>No hay datos para mostrar en esta tabla.</p>
+    <?php endif; ?>
+</div>
+
+<!--MAPA-->
+<h2 id="mapa">Mapa: <?= htmlspecialchars($tablaSeleccionada) ?> </h2>
 
 <div id="map"></div>
 
 <script>
-    const apiKey = 'dnFFEblgizXhxa7tXsNLdLT3cA7IKR0Y'; // Reemplaza con tu clave real
+    const apiKey = 'dnFFEblgizXhxa7tXsNLdLT3cA7IKR0Y'; 
     const coordenadas = <?= json_encode($coordenadas); ?>;
 
     const map = tt.map({
@@ -135,5 +211,9 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
     });
 </script>
 
+
+
+
 </body>
+
 </html>

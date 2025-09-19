@@ -22,7 +22,7 @@ $tablaSeleccionada = $_POST['tabla'] ?? null;
 $datos = [];
 
 if($tablaSeleccionada && in_array($tablaSeleccionada,$tablas)){
-    $stmt = $conn->prepare("SELECT * FROM `$tablaSeleccionada` LIMIT 100");
+    $stmt = $conn->prepare("SELECT * FROM `$tablaSeleccionada` ");
     $stmt->execute();
     $datos = $stmt->fetchALL(PDO::FETCH_ASSOC);
 }

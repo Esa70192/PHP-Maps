@@ -1,0 +1,16 @@
+.tabla {
+  width: 100%; /* Ancho de la caja */
+  height: 500px; /* Altura de la caja */
+  border: 1px solid grey; /* Para ver el contorno de la caja */
+  overflow: auto; /* Muestra barras de scroll solo cuando es necesario */
+  font-size: 12px;
+}
+
+.datostabla{
+  text-align: center;
+}
+
+#mapa{
+  font-size: 25px;
+  text-align: center;
+}
