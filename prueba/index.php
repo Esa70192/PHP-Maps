@@ -13,7 +13,6 @@ try {
     $tablas = $stmt->fetchALL(PDO::FETCH_COLUMN);
 
     $conexionExitosa = true;
-
 } catch (PDOException $e) {
     $conexionExitosa = false;
     $errorMensaje = $e->getMessage();
@@ -26,34 +25,16 @@ if($tablaSeleccionada && in_array($tablaSeleccionada,$tablas)){
     $stmt = $conn->prepare("SELECT * FROM `$tablaSeleccionada` LIMIT 100");
     $stmt->execute();
     $datos = $stmt->fetchALL(PDO::FETCH_ASSOC);
-    $sql = "SELECT LATITUD, LONGITUD FROM `$tablaSeleccionada`";
-    $result = $conn -> query($sql);
-    $puntos = [];
-
-    while($row = $result->fetch(PDO::FETCH_ASSOC)){
-        $puntos[] = $row;
-    }
-
-    header('Content-Type: application/json');
-    echo json_encode($puntos);
 }
+
+
 ?>
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="initial-scale=1, width=device-width">
-    <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.18.0/maps/maps-web.min.js"></script>
-    <link rel="stylesheet" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.18.0/maps/maps.css">
-    <style>
-        #map { width: 100%; height: 500px; }
-    </style>
     <title>Conexion a BD</title>
 </head>
 
@@ -103,33 +84,6 @@ if($tablaSeleccionada && in_array($tablaSeleccionada,$tablas)){
     <?php elseif ($tablaSeleccionada): ?>
         <p>No hay datos para mostrar en esta tabla.</p>
     <?php endif; ?>
-
-    <h2>Mapa con TomTom y PHP</h2>
-    <div id="map"></div>
-
-    <script>
-        // Inicia el mapa
-        const map = tt.map({
-            key: 'dnFFEblgizXhxa7tXsNLdLT3cA7IKR0Y',
-            container: 'map',
-            center: [19.40771965424571, -99.18955248149084], 
-            zoom: 5
-        });
-
-        // Agrega controles
-        map.addControl(new tt.NavigationControl());
-
-        // Cargar los puntos desde PHP
-        fetch('get-points.php')
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(punto => {
-                    new tt.Marker()
-                        .setLngLat([punto.lng, punto.lat])
-                        .addTo(map);
-                });
-            });
-    </script>
 
 </body>
 
