@@ -133,6 +133,21 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
                 .addTo(map);
         }
     });
+
+    function irAPuntoPorId(id) {
+    const marker = markersPorId[id];
+    if (marker) {
+      const coords = marker.getLngLat();
+      map.flyTo({
+        center: coords,
+        zoom: 14,
+        speed: 1
+      });
+    } else {
+      alert("Punto no encontrado: " + id);
+    }
+  }
+
 </script>
 
 </body>

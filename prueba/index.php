@@ -43,9 +43,9 @@ if($tablaSeleccionada && in_array($tablaSeleccionada,$tablas)){
     <h1>Conexión a la base de datos</h1>
 
     <?php if ($conexionExitosa): ?>
-        <p style="color: green;">¡Conexión exitosa!</p>
+        <p style="color: green;">Conexion a BD</p>
     <?php else: ?>
-        <p style="color: red;">Error al conectar: <?= $errorMensaje ?></p>
+        <p style="color: red;">Error al conectar <?= $errorMensaje ?></p>
     <?php endif; ?>
 
     <form method="post">
