@@ -1,5 +1,5 @@
 <?php
-// Conexión a la base de datos (PDO)
+// Conexión a la base de datos
 $host = "localhost";
 $dbname = "capas";
 $user = "root";
