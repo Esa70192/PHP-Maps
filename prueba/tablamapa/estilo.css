@@ -42,14 +42,20 @@ th{
   top: 0;
   background-color: var(--gris);
   z-index: 1;
-  
 }
 
 th, td {
+  font-size: 0.7rem;
   border: 0.3rem solid var(--gris);
   padding: 0.5rem;
   text-align: center;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/*Mensaje BD*/
+.bd{
+  font-size: 0.7rem;
+  text-align: center;
 }
 
 /*Titulos*/

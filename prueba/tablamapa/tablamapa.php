@@ -63,7 +63,6 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
             SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
             FROM `$tablaSeleccionada`
             WHERE `$campoLat` IS NOT NULL AND `$campoLng` IS NOT NULL
-            LIMIT 100
         ");
         $stmt->execute();
         $coordenadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -89,16 +88,15 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
 </head>
 <body>
     <!--TABLA BD-->
-    <h1 class="titulo">Tablas</h1>
-
     <?php if ($conexionExitosa): ?>
-        <p class = "texto">Conexion a BD</p>
+        <p class = "bd">Conexión exitosa</p>
     <?php else: ?>
-        <p class = "texto">Error al conectar: <?= $errorMensaje ?></p>
+        <p class = "bd">Error al conectar: <?= $errorMensaje ?></p>
     <?php endif; ?>
+    <h1 class="titulo">Tablas</h1>
     <div class= "texto">
         <form method="post">
-            <label for="tabla">Tablas:</label>
+            <label for="tabla">Elija la tabla:</label>
             <select name="tabla" id="tabla" required>
                 <option value="">-- Selecciona una tabla --</option>
                 <?php foreach ($tablas as $tabla): ?>
