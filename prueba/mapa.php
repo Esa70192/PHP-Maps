@@ -9,25 +9,29 @@ try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    // Obtener todas las tablas
     $stmt = $conn->query("SHOW TABLES");
     $tablas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    $conexionExitosa = true;
 } catch (PDOException $e) {
     die("Error de conexión: " . $e->getMessage());
 }
 
-$tablaSeleccionada = $_POST['tabla'] ?? ($tablas[0] ?? null);
-$idSeleccionado = $_POST['id_seleccionado'] ?? null;
+$tablasConCoords = [];
+$coordenadas = [];
 
+$tablaSeleccionada = $_POST['tabla'] ?? ($tablas[0] ?? null);
 $campoId = '';
 $campoLat = '';
 $campoLng = '';
-$idsDisponibles = [];
-$coordenadas = [];
 
 if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
+    // Obtener nombres de columnas
     $stmt = $conn->query("DESCRIBE `$tablaSeleccionada`");
     $columnas = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+    // Detectar nombre de columna ID (la primera que empiece con id_)
     foreach ($columnas as $col) {
         if (preg_match('/^ID_/', $col)) {
             $campoId = $col;
@@ -35,6 +39,7 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
         }
     }
 
+    // Detectar columnas de latitud y longitud
     foreach ($columnas as $col) {
         if (in_array(strtolower($col), ['latitud'])) {
             $campoLat = $col;
@@ -43,36 +48,15 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
         }
     }
 
+    // Solo ejecutar la consulta si se encontraron todos los campos
     if ($campoId && $campoLat && $campoLng) {
-        // Obtener todos los IDs disponibles
         $stmt = $conn->prepare("
-            SELECT `$campoId` AS id
+            SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
             FROM `$tablaSeleccionada`
             WHERE `$campoLat` IS NOT NULL AND `$campoLng` IS NOT NULL
-            ORDER BY id
+            LIMIT 100
         ");
         $stmt->execute();
-        $idsDisponibles = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-        // Si el usuario eligió un ID específico, traer solo esa coordenada
-        if ($idSeleccionado && in_array($idSeleccionado, $idsDisponibles)) {
-            $stmt = $conn->prepare("
-                SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
-                FROM `$tablaSeleccionada`
-                WHERE `$campoId` = :id
-            ");
-            $stmt->execute(['id' => $idSeleccionado]);
-        } else {
-            // Por defecto mostrar todos (limitados)
-            $stmt = $conn->prepare("
-                SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
-                FROM `$tablaSeleccionada`
-                WHERE `$campoLat` IS NOT NULL AND `$campoLng` IS NOT NULL
-                LIMIT 100
-            ");
-            $stmt->execute();
-        }
-
         $coordenadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
@@ -85,7 +69,7 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
     <title>Mapa con IDs desde MySQL</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- TomTom SDK -->
+    <!-- SDK de TomTom -->
     <link rel="stylesheet" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.20.0/maps/maps.css">
     <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.20.0/maps/maps-web.min.js"></script>
 
@@ -95,8 +79,8 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
             height: 600px;
         }
         .custom-marker {
-            background-color: #007bff;
-            color: white;
+            background-color: #28a745;
+            color: #fff;
             font-weight: bold;
             border-radius: 50%;
             width: 32px;
@@ -121,24 +105,12 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
             </option>
         <?php endforeach; ?>
     </select>
-
-    <?php if (!empty($idsDisponibles)): ?>
-        <label for="id_seleccionado" style="margin-left: 20px;">Seleccionar ID:</label>
-        <select name="id_seleccionado" id="id_seleccionado" onchange="this.form.submit()">
-            <option value="">-- Mostrar todos --</option>
-            <?php foreach ($idsDisponibles as $id): ?>
-                <option value="<?= $id ?>" <?= $id == $idSeleccionado ? 'selected' : '' ?>>
-                    <?= $id ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    <?php endif; ?>
 </form>
 
 <div id="map"></div>
 
 <script>
-    const apiKey = 'dnFFEblgizXhxa7tXsNLdLT3cA7IKR0Y'; // Tu API Key de TomTom
+    const apiKey = 'dnFFEblgizXhxa7tXsNLdLT3cA7IKR0Y'; // Reemplaza con tu clave real
     const coordenadas = <?= json_encode($coordenadas); ?>;
 
     const map = tt.map({
@@ -161,6 +133,21 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
                 .addTo(map);
         }
     });
+
+    function irAPuntoPorId(id) {
+    const marker = markersPorId[id];
+    if (marker) {
+      const coords = marker.getLngLat();
+      map.flyTo({
+        center: coords,
+        zoom: 14,
+        speed: 1
+      });
+    } else {
+      alert("Punto no encontrado: " + id);
+    }
+  }
+
 </script>
 
 </body>
