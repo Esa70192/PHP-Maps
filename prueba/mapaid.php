@@ -18,6 +18,7 @@ try {
 $tablaSeleccionada = $_POST['tabla'] ?? ($tablas[0] ?? null);
 $idSeleccionado = $_POST['id_seleccionado'] ?? null;
 
+//MAPA
 $campoId = '';
 $campoLat = '';
 $campoLng = '';

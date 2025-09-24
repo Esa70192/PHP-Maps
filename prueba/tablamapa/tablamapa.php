@@ -22,18 +22,23 @@ try {
 $tablaSeleccionada = $_POST['tabla'] ?? null;
 $datos = [];
 
+//Filtro Id
+$idSeleccionado = $_POST['id_seleccionado'] ?? null;
+
+//MAPA
+$campoId = '';
+$campoLat = '';
+$campoLng = '';
+$tablasConCoords = [];
+$coordenadas = [];
+$idsDisponibles = [];
+
+//Para mostrar tabla
 if($tablaSeleccionada && in_array($tablaSeleccionada,$tablas)){
     $stmt = $conn->prepare("SELECT * FROM `$tablaSeleccionada` ");
     $stmt->execute();
     $datos = $stmt->fetchALL(PDO::FETCH_ASSOC);
 }
-
-//MAPA
-$tablasConCoords = [];
-$coordenadas = [];
-$campoId = '';
-$campoLat = '';
-$campoLng = '';
 
 if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
     // Obtener nombres de columnas
@@ -66,6 +71,25 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
         ");
         $stmt->execute();
         $coordenadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        //Si el usuario elije un ID especifico
+        if ($idSeleccionado && in_array($idSeleccionado, $idsDisponibles)) {
+        $stmt = $conn->prepare("
+            SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
+            FROM `$tablaSeleccionada`
+            WHERE `$campoId` = :id
+            ");
+        $stmt->execute(['id' => $idSeleccionado]);
+        } else {
+            // Por defecto mostrar todos (limitados)
+            $stmt = $conn->prepare("
+                SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
+                FROM `$tablaSeleccionada`
+                WHERE `$campoLat` IS NOT NULL AND `$campoLng` IS NOT NULL
+            ");
+            $stmt->execute();
+        }
+        $coordenadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
@@ -93,19 +117,30 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
     <?php else: ?>
         <p class = "bd">Error al conectar: <?= $errorMensaje ?></p>
     <?php endif; ?>
-    <h1 class="titulo">Tablas</h1>
+    <h1 class="titulo">Sistema de geolocalizacion</h1>
     <div class= "texto">
         <form method="post">
-            <label for="tabla">Elija la tabla:</label>
+            <label for="tabla">Elija una tabla:</label>
             <select name="tabla" id="tabla" required>
-                <option value="">-- Selecciona una tabla --</option>
                 <?php foreach ($tablas as $tabla): ?>
                     <option value="<?= htmlspecialchars($tabla) ?>" <?= ($tabla === $tablaSeleccionada) ? "selected" : "" ?>>
                         <?= htmlspecialchars($tabla) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit">Mostrar datos</button>
+            
+            <!--SELECTOR DE ID-->
+            <?php if (!empty($idsDisponibles)): ?>
+                <label for="id_seleccionado">Seleccionar ID:</label>
+                <select name="id_seleccionado" id="id_seleccionado" onchange="this.form.submit()">
+                    <option value="">-- Mostrar todos --</option>
+                    <?php foreach ($idsDisponibles as $id): ?>
+                        <option value="<?= $id ?>" <?= $id == $idSeleccionado ? 'selected' : '' ?>>
+                            <?= $id ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif; ?>
         </form>
     </div>
     <?php if ($datos): ?>

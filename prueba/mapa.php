@@ -54,7 +54,6 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
             SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
             FROM `$tablaSeleccionada`
             WHERE `$campoLat` IS NOT NULL AND `$campoLng` IS NOT NULL
-            LIMIT 100
         ");
         $stmt->execute();
         $coordenadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -108,6 +107,7 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
 </form>
 
 <div id="map"></div>
+
 
 <script>
     const apiKey = 'dnFFEblgizXhxa7tXsNLdLT3cA7IKR0Y'; // Reemplaza con tu clave real
