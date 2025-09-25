@@ -20,31 +20,52 @@ try {
 
 //TABLA
 $tablaSeleccionada = $_POST['tabla'] ?? null;
+$filtros = $_POST['filtros'] ?? [];
 $datos = [];
-
-//Filtro Id
-$idSeleccionado = $_POST['id_seleccionado'] ?? null;
+$columnas=[];
 
 //MAPA
+$tablasConCoords = [];
+$coordenadas = [];
 $campoId = '';
 $campoLat = '';
 $campoLng = '';
-$tablasConCoords = [];
-$coordenadas = [];
-$idsDisponibles = [];
+$idsDisponibles=[];
+$idSeleccionado=$_POST['id_seleccionado']?? null;
 
-//Para mostrar tabla
-if($tablaSeleccionada && in_array($tablaSeleccionada,$tablas)){
-    $stmt = $conn->prepare("SELECT * FROM `$tablaSeleccionada` ");
-    $stmt->execute();
-    $datos = $stmt->fetchALL(PDO::FETCH_ASSOC);
-}
 
 if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
-    // Obtener nombres de columnas
-    $stmt = $conn->query("DESCRIBE `$tablaSeleccionada`");
-    $columnas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $stmt = $conn->prepare("DESCRIBE `$tablaSeleccionada` ");
+    $stmt->execute();
+    $columnas = $stmt->fetchALL(PDO::FETCH_COLUMN);
+    
+    $where=[];
+    $params=[];
 
+    foreach($columnas as $columna){
+        if(!empty($filtros[$columna])){
+            $where[]="`$columna`=:$columna";
+            $params[$columna]=$filtros[$columna];
+        }
+    }
+
+    $sql="SELECT * FROM `$tablaSeleccionada`";
+    if(!empty($where)){
+        $sql .= "WHERE" . implode("AND",$where);
+    }
+
+    $stmt=$conn->prepare($sql);
+    $stmt->execute($params);
+    $datos=$stmt->fetchALL(PDO::FETCH_ASSOC);
+
+    $valoresUnicos=[];
+    foreach($columnas as $columna){
+        $stmt=$conn->prepare("SELECT DISTINCT `$columna` FROM `$tablaSeleccionada` ORDER BY `$columna`");
+        $stmt->execute();
+        $valoresUnicos[$columna]=$stmt->fetchALL(PDO::FETCH_COLUMN);
+    }
+
+    //---------------MAPA------------------
     // Detectar nombre de columna ID (la primera que empiece con id_)
     foreach ($columnas as $col) {
         if (preg_match('/^ID_/', $col)) {
@@ -62,35 +83,24 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
         }
     }
 
-    // Solo ejecutar la consulta si se encontraron todos los campos
-    if ($campoId && $campoLat && $campoLng) {
-        $stmt = $conn->prepare("
-            SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
-            FROM `$tablaSeleccionada`
-            WHERE `$campoLat` IS NOT NULL AND `$campoLng` IS NOT NULL
-        ");
-        $stmt->execute();
-        $coordenadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Reusar condiciones y agregar que latitud y longitud no sean NULL
+    $whereMapa = $where; // copiar condiciones existentes
+    $whereMapa[] = "`$campoLat` IS NOT NULL";
+    $whereMapa[] = "`$campoLng` IS NOT NULL";
 
-        //Si el usuario elije un ID especifico
-        if ($idSeleccionado && in_array($idSeleccionado, $idsDisponibles)) {
-        $stmt = $conn->prepare("
-            SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
-            FROM `$tablaSeleccionada`
-            WHERE `$campoId` = :id
-            ");
-        $stmt->execute(['id' => $idSeleccionado]);
-        } else {
-            // Por defecto mostrar todos (limitados)
-            $stmt = $conn->prepare("
-                SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
-                FROM `$tablaSeleccionada`
-                WHERE `$campoLat` IS NOT NULL AND `$campoLng` IS NOT NULL
-            ");
-            $stmt->execute();
-        }
-        $coordenadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $sqlMapa = "SELECT `$campoId` AS id, `$campoLat` AS lat, `$campoLng` AS lng
+                FROM `$tablaSeleccionada`";
+
+    if (!empty($whereMapa)) {
+        $sqlMapa .= " WHERE " . implode(" AND ", $whereMapa);
     }
+
+    $sqlMapa .= " ORDER BY id";
+
+    $stmt = $conn->prepare($sqlMapa);
+    $stmt->execute($params); // usamos los mismos parámetros que antes
+    $puntosMapa = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 }
 
 ?>
@@ -117,32 +127,44 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
     <?php else: ?>
         <p class = "bd">Error al conectar: <?= $errorMensaje ?></p>
     <?php endif; ?>
-    <h1 class="titulo">Sistema de geolocalizacion</h1>
+    <h1 class="titulo">Tablas</h1>
     <div class= "texto">
         <form method="post">
-            <label for="tabla">Elija una tabla:</label>
-            <select name="tabla" id="tabla" required>
+            <label for="tabla">Elija la tabla:</label>
+            <select name="tabla" id="tabla" required onchange="this.form.submit()">
+                <option value="">-- Selecciona una tabla --</option>
                 <?php foreach ($tablas as $tabla): ?>
                     <option value="<?= htmlspecialchars($tabla) ?>" <?= ($tabla === $tablaSeleccionada) ? "selected" : "" ?>>
                         <?= htmlspecialchars($tabla) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-            
-            <!--SELECTOR DE ID-->
-            <?php if (!empty($idsDisponibles)): ?>
-                <label for="id_seleccionado">Seleccionar ID:</label>
-                <select name="id_seleccionado" id="id_seleccionado" onchange="this.form.submit()">
-                    <option value="">-- Mostrar todos --</option>
-                    <?php foreach ($idsDisponibles as $id): ?>
-                        <option value="<?= $id ?>" <?= $id == $idSeleccionado ? 'selected' : '' ?>>
-                            <?= $id ?>
+        </form>
+    </div>
+
+    <!------FILTO------->
+    <?php if ($tablaSeleccionada && !empty($columnas)): ?>
+        <form method="post">
+            <input type="hidden" name="tabla" value="<?= htmlspecialchars($tablaSeleccionada) ?>">
+            <h3>Filtros</h3>
+            <?php foreach ($columnas as $columna): ?>
+                <label for="filtros[<?= htmlspecialchars($columna) ?>]"><?= htmlspecialchars($columna) ?>:</label>
+                <select name="filtros[<?= htmlspecialchars($columna) ?>]" id="filtros[<?= htmlspecialchars($columna) ?>]">
+                    <option value="">-- Todos --</option>
+                    <?php foreach ($valoresUnicos[$columna] as $valor): ?>
+                        <option value="<?= htmlspecialchars($valor) ?>" <?= (isset($filtros[$columna]) && $filtros[$columna] == $valor) ? "selected" : "" ?>>
+                            <?= htmlspecialchars($valor) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
-            <?php endif; ?>
+                <br>
+            <?php endforeach; ?>
+
+            <button type="submit">Filtrar</button>
         </form>
-    </div>
+    <?php endif; ?>
+
+    <!-------DATOS DE TABLA----->
     <?php if ($datos): ?>
     <h2 class="titulo">Datos de la tabla <?= htmlspecialchars($tablaSeleccionada) ?></h2>
     <div class="contenedor_tabla">   
@@ -168,11 +190,12 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
             <p>No hay datos para mostrar en esta tabla.</p>
         <?php endif; ?>
     </div>
+
     <!--MAPA-->
     <h2 class="titulo">Mapa de <?= htmlspecialchars($tablaSeleccionada ?? '' ) ?> </h2>
     <div id="map"></div>
     <script>
-      const coordenadas = <?= json_encode($coordenadas); ?>;
+      const coordenadas = <?= json_encode($puntosMapa); ?>;
     </script>
     <script src="mapa.js"></script>
 </body>
