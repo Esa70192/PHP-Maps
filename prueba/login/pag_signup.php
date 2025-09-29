@@ -15,5 +15,6 @@
         Confirmar contraseña: <input type="password" name="conf_password" required><br><br>
         <input type="submit" value="Entrar">
     </form>
+    <button onclick="window.location.href='pag_login.php'">Ya tengo cuenta.</button>
 </body>
 </html>

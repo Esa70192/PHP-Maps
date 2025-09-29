@@ -1,6 +1,6 @@
 <?php
 
-include 'conexiondb.php';
+require 'conexiondb.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recoger datos del formulario
@@ -59,9 +59,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['nombre'] = $nombre; // Opciona
             
             echo "Registro exitoso.";
+            echo "Rediriendo en 3 segundos.";
             echo    '<script>  
                         setTimeout(function() {
-                            window.location.href = "pag_principal.php";
+                            window.location.href = "principal.php";
                         }, 3000); // 3000 milisegundos = 3 segundos
                     </script>';   
         } else {

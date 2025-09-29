@@ -1,29 +1,47 @@
 <?php
+session_start(); // Necesario para usar $_SESSION
 
-include 'conexiondb.php';
+require 'conexiondb.php'; // Asegúrate de tener tu conexión PDO aquí
 
-$correo = $_POST['correo'];
-$password = $_POST['password'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $correo = trim($_POST["correo"]);
+    $password = $_POST["password"];
 
-// 3. Buscar al usuario en la base de datos
-$sql = "SELECT password FROM usuarios WHERE correo = :correo";
-$stmt = $conn->prepare($sql);
-$stmt->bindParam(':correo', $correo);
-$stmt->execute();
+    try {
+        $stmt = $conn->prepare("SELECT id_usuario, nombres, password FROM usuarios WHERE correo = :correo");
+        $stmt->bindParam(':correo', $correo);
+        $stmt->execute();
 
-// 4. Verificar si existe y validar la contraseña
-if ($stmt->rowCount() === 1) {
-    $fila = $stmt->fetch(PDO::FETCH_ASSOC);
-    $hash_en_bd = $fila['password'];
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Verificar la contraseña
-    if (password_verify($password, $hash_en_bd)) {
-        echo "✅ Inicio de sesión exitoso. Bienvenido, $correo.";
-        // session_start(); $_SESSION['usuario'] = $usuario;
-    } else {
-        echo "❌ Contraseña incorrecta.";
+        if ($usuario && password_verify($password, $usuario["password"])) {
+            // Login exitoso
+            $_SESSION["usuario_id"] = $usuario["id_usuario"];
+            $_SESSION["nombre"] = $usuario["nombres"];
+
+            // Redirigir a página principal
+            header("Location: principal.php");
+            exit();
+        } else {
+            // Login fallido
+            echo "Correo o contraseña incorrectos.";
+            echo "Recargando pagina en 3 segundos.";
+            echo '<script>
+                    setTimeout(function() {
+                        window.location.href = "pag_login.php";
+                    }, 3000);
+                  </script>';
+        }
+    } catch (PDOException $e) {
+        echo "Error en la base de datos: " . $e->getMessage();
+        echo '<script>
+                setTimeout(function() {
+                    window.location.href = "pag_login.php";
+                }, 3000);
+              </script>';
     }
 } else {
-    echo "❌ Usuario no encontrado.";
+    // Si alguien entra directo sin enviar formulario, redirige
+    header("Location: pag_login.php");
+    exit();
 }
-?>
