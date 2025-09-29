@@ -5,9 +5,9 @@
     <title>Login</title>
 </head>
 <body>
-    <h2>Iniciar Sesión</h2>
+    <h1>Iniciar Sesión</h1>
     <form action="login.php" method="post">
-        Usuario: <input type="text" name="usuario" required><br><br>
+        Correo: <input type="text" name="correo" required><br><br>
         Contraseña: <input type="password" name="password" required><br><br>
         <input type="submit" value="Entrar">
     </form>

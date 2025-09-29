@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login.html");
+    header("Location: pag_signup.php"); 
     exit();
 }
 ?>
@@ -14,7 +14,7 @@ if (!isset($_SESSION['usuario_id'])) {
     <title>Página Principal</title>
 </head>
 <body>
-    <h1>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario']); ?>!</h1>
+    <h1>Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre']); ?>!</h1>
     <p>Esta es la información privada de la página principal.</p>
     <a href="logout.php">Cerrar sesión</a>
 </body>

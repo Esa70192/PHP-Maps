@@ -26,7 +26,6 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
         }
     }
 
-    // Reusar condiciones y agregar que latitud y longitud no sean NULL
     $whereMapa = $where; // copiar condiciones existentes
     $whereMapa[] = "`$campoLat` IS NOT NULL";
     $whereMapa[] = "`$campoLng` IS NOT NULL";
