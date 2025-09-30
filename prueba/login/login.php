@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["nombre"] = $usuario["nombres"];
 
             // Redirigir a página principal
-            header("Location: principal.php");
+            header("Location: pag_principal.php");
             exit();
         } else {
             // Login fallido

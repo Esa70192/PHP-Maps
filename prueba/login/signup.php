@@ -34,7 +34,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
-            echo "Este correo ya está registrado.";
+            echo "Este correo ya está registrado. ";
+            echo "Redirigiendo en 3 segundos.";
+            echo    '<script>  
+                        setTimeout(function() {
+                            window.location.href = "pag_signup.php";
+                        }, 3000); // 3000 milisegundos = 3 segundos
+                    </script>';
             exit;
         }
 
@@ -62,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "Rediriendo en 3 segundos.";
             echo    '<script>  
                         setTimeout(function() {
-                            window.location.href = "principal.php";
+                            window.location.href = "pag_principal.php";
                         }, 3000); // 3000 milisegundos = 3 segundos
                     </script>';   
         } else {
