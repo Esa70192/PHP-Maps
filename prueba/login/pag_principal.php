@@ -33,7 +33,7 @@ include 'mapa.php';
     <div class= "texto">
         <form method="post">
             <label for="tabla">Elija la tabla:</label>
-            <select class="ele_tabla" name="tabla" id="tabla" required onchange="this.form.submit()">
+            <select class="ele_tabla" name="tabla" required onchange="this.form.submit()">
                 <option value="">-- Selecciona una tabla --</option>
                 <?php foreach ($tablas as $tabla): ?>
                     <option value="<?= htmlspecialchars($tabla) ?>" <?= ($tabla === $tablaSeleccionada) ? "selected" : "" ?>>
@@ -45,13 +45,13 @@ include 'mapa.php';
     </div>
 
     <!------FILTO------->
-    <?php if ($tablaSeleccionada && !empty($columnas)): ?>
+    <?php if ($tablaSeleccionada && !empty($columnas_muestra)): ?>
         <form method="post">
             <input type="hidden" name="tabla" value="<?= htmlspecialchars($tablaSeleccionada) ?>">
             <h3>Filtros</h3>
-            <?php foreach ($columnas as $columna): ?>
+            <?php foreach ($columnas_muestra as $columna): ?>
                 <label for="filtros[<?= htmlspecialchars($columna) ?>]"><?= htmlspecialchars($columna) ?>:</label>
-                <select class="ele_tabla" name="filtros[<?= htmlspecialchars($columna) ?>]" id="filtros[<?= htmlspecialchars($columna) ?>]">
+                <select class="ele_tabla" name="filtros[<?= htmlspecialchars($columna) ?>]" id="filtros[<?= htmlspecialchars($columna) ?>] " onchange="this.form.submit()">
                     <option value="">-- Todos --</option>
                     <?php foreach ($valoresUnicos[$columna] as $valor): ?>
                         <option value="<?= htmlspecialchars($valor) ?>" <?= (isset($filtros[$columna]) && $filtros[$columna] == $valor) ? "selected" : "" ?>>
@@ -61,37 +61,38 @@ include 'mapa.php';
                 </select>
                 <br>
             <?php endforeach; ?>
-
-            <button class="botonpag" type="submit">Filtrar</button>
         </form>
     <?php endif; ?>
 
     <!-------DATOS DE TABLA----->
     <?php if ($datos): ?>
     <h2 class="titulo">Datos de la tabla <?= htmlspecialchars($tablaSeleccionada) ?></h2>
-    <div class="contenedor_tabla">   
-        <table class = "tabla">
-            <thead>
-                <tr>
-                    <?php foreach (array_keys($datos[0]) as $columna): ?>
-                        <th><?= htmlspecialchars($columna) ?></th>
-                    <?php endforeach; ?>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($datos as $fila): ?>
+    <div class="fondotabla">
+        <div class="contenedor_tabla">   
+            <table class = "tabla">
+                <thead>
                     <tr>
-                        <?php foreach ($fila as $valor): ?>
-                            <td><?= htmlspecialchars($valor) ?></td>
+                        <?php foreach (array_keys($datos[0]) as $columna): ?>
+                            <th><?= htmlspecialchars($columna) ?></th>
                         <?php endforeach; ?>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php elseif ($tablaSeleccionada): ?>
-        <p>No hay datos para mostrar en esta tabla.</p>
-    <?php endif; ?>
+                </thead>
+                <tbody>
+                    <?php foreach ($datos as $fila): ?>
+                        <tr>
+                            <?php foreach ($fila as $valor): ?>
+                                <td><?= htmlspecialchars($valor) ?></td>
+                            <?php endforeach; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php elseif ($tablaSeleccionada): ?>
+            <p>No hay datos para mostrar en esta tabla.</p>
+        <?php endif; ?>
+        </div>
     </div>
+    
 
     <!--MAPA-->
     <h2 class="titulo">Mapa de <?= htmlspecialchars($tablaSeleccionada ?? '' ) ?> </h2>

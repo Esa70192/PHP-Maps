@@ -7,8 +7,16 @@
   --azul: #27BBE3;
   --azulgris: #92CEE0;
   --verdeclaro: #E3F5BA;
+  --grisverde:#EEF2EB;
+  --grisblanco:#F3F5F0;
+  --azulclaro:#B3EAFC;
+  --azulfuerte:#8FB7C4;
   font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+  background: linear-gradient(to bottom, var(--azulgris), var(--grisverde));
 }
 
 /*Configuracion del mapa*/
@@ -29,7 +37,7 @@
 }
 
 .ele_tabla{
-  background-color: var(--verdeclaro);
+  background-color: var(--azulfuerte);
   padding: 0.5rem;
   border: none;
   border-radius: 5px;
@@ -44,6 +52,9 @@
   overflow: auto; 
   font-size: 1rem;
   padding: 0.3rem;
+  width: 80%;
+  margin: auto;
+  background-color: var(--grisblanco);
 }
 .tabla{
   border-collapse: collapse;
@@ -73,7 +84,7 @@ th, td {
 /*Titulos*/
 .titulo{
   text-align: center;
-  background-color: var(--color_titulos);
+  background-color: var(--azulclaro);
   font-size: 2rem;
 }
 /*Texto*/
@@ -84,6 +95,19 @@ th, td {
 
 .textoregistro{
   text-align: center;
+}
+.contenedor_error{
+  display: flex;
+  width: 10rem;
+  height: 5rem;
+  align-items: center;
+  justify-content: center;
+  background-color: yellow;
+  border-radius: 1rem;
+  margin: 2rem auto;
+}
+.contenedor_error{
+  visibility: hidden;
 }
 .registro{
   width: 50rem;
@@ -96,6 +120,12 @@ th, td {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   margin: 50px auto;
   font-size: 1.5rem;
+}
+.contenedor_login{
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
 }
 .registrolog{
   width: 30rem;

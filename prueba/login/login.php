@@ -1,7 +1,7 @@
 <?php
-session_start(); // Necesario para usar $_SESSION
+session_start(); 
 
-require 'conexiondb.php'; // Asegúrate de tener tu conexión PDO aquí
+require 'conexiondb.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $correo = trim($_POST["correo"]);
@@ -23,14 +23,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: pag_principal.php");
             exit();
         } else {
-            // Login fallido
-            echo "Correo o contraseña incorrectos.";
-            echo "Recargando pagina en 3 segundos.";
-            echo '<script>
-                    setTimeout(function() {
-                        window.location.href = "pag_login.php";
-                    }, 3000);
-                  </script>';
+            $_SESSION["login_error"] = "Correo o contraseña incorrectos.";
+            header("Location: pag_login.php");
+            exit();
         }
     } catch (PDOException $e) {
         echo "Error en la base de datos: " . $e->getMessage();
