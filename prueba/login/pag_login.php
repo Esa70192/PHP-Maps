@@ -14,9 +14,6 @@ if (isset($_SESSION["login_error"])) {
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
-    <?php if (!empty($error)): ?>
-        <p class="error"><?php echo $error; ?></p>
-    <?php endif; ?>
     <div class="contenedor_login">
         <div class="registrolog">   
             <form class="form_registro" action="login.php" method="post">
@@ -28,6 +25,9 @@ if (isset($_SESSION["login_error"])) {
                     Contraseña: <br><input class="input" type="password" name="password" required><br><br>
                 </label>
                 <input class="boton" type="submit" value="Iniciar sesión">
+                <?php if (!empty($error)): ?>
+                    <p class="error"><?php echo $error; ?></p>
+                <?php endif; ?>
                 <!--<button class="boton" onclick="window.location.href='pag_signup.php'">Registrarme.</button>-->
             </form>
         </div>

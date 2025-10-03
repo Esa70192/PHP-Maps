@@ -1,8 +1,8 @@
 <?php
 
-include 'conexiondb.php';
-include 'tablasdb.php';
-include 'mapa.php';
+require 'conexiondb.php';
+require 'tablasdb.php';
+require 'mapa.php';
 
 ?>
 
@@ -26,9 +26,25 @@ include 'mapa.php';
     <?php else: ?>
         <p class = "bd">Error al conectar: <?= $errorMensaje ?></p>
     <?php endif; ?>
-    <form action="logout.php" method="POST">
-        <button class="botonpag" type="submit">Cerrar sesión</button>
-    </form>
+    <div class="encabezado">
+        <div class="izquierda">
+            <h3>Selecione el archivo</h3>
+            <form class="subirarchivo" action="subir.php" method="POST" enctype="multipart/form-data">
+                <label for="archivo" class="seleccion_arch">
+                    Seleccionar archivo
+                </label>
+                <input id="archivo" type="file" name="archivo" accept=".csv" onchange="mostrarNombre(this)">
+                <span class="filename" id="nombreArchivo">Ningún archivo seleccionado</span>
+                <script src="subir.js"></script>
+                <button class="botonpag" type="submit">Subir</button>
+            </form>
+        </div>
+        <div class="derecha">
+            <form class="form_cerrar" action="logout.php" method="POST">
+                <button class="botonpag" type="submit">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
     <h1 class="titulo">Tablas</h1>
     <div class= "texto">
         <form method="post">
@@ -101,5 +117,6 @@ include 'mapa.php';
       const coordenadas = <?= json_encode($puntosMapa); ?>;
     </script>
     <script src="mapa.js"></script>
+
 </body>
 </html>

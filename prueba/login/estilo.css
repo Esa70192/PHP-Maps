@@ -14,6 +14,11 @@
   font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
 }
+html{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
 body{
   background: linear-gradient(to bottom, var(--azulgris), var(--grisverde));
@@ -96,18 +101,10 @@ th, td {
 .textoregistro{
   text-align: center;
 }
-.contenedor_error{
-  display: flex;
-  width: 10rem;
-  height: 5rem;
-  align-items: center;
-  justify-content: center;
-  background-color: yellow;
-  border-radius: 1rem;
-  margin: 2rem auto;
-}
-.contenedor_error{
-  visibility: hidden;
+.error{
+  margin: 0 auto;
+  font-size: 1rem;
+  color: red;
 }
 .registro{
   width: 50rem;
@@ -162,13 +159,46 @@ th, td {
   padding: 0.6rem;
   border: none;
   border-radius: 5px;
-  width: 20%;
   font-size: 1rem;
-  margin-top: 0.2rem;
 }
 .form_registro{
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 80%;
+}
+.encabezado{
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 0.7rem 0.7rem;
+}
+.izquierda {
+  display: flex;
+  flex-direction: row;
+}
+.derecha{
+  display: flex;
+  justify-content: flex-end;
+}
+.subirarchivo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  padding: 0.5rem 0.5rem;
+}
+.seleccion_arch{
+  padding: 1rem 1rem;
+  cursor: pointer;
+  background-color: var(--azulgris);
+  color: var(--negro);
+  border-radius: 0.3rem;
+}
+input[type="file"] {
+    display: none;
+}
+.filename {
+    font-size: 1rem;
+    color: var(--negro);
 }
