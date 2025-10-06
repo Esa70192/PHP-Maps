@@ -3,6 +3,19 @@
 require_once 'conexiondb.php';
 require_once 'tablasdb.php';
 
+if (isset($_POST['nombre_tabla'])) {
+    $nombre_ingresado = trim($_POST['nombre_tabla']);
+
+    // Validar que el nombre sea seguro (solo letras, números y guiones bajos)
+    if (preg_match('/^[a-zA-Z0-9_]+$/', $nombre_ingresado)) {
+        $nombreTabla = $nombre_ingresado;
+    }else{
+        echo "❌ Nombre de tabla inválido. Solo se permiten letras, números y guión bajo.";
+    }
+}else{
+    echo "No se recibió ningún nombre de tabla.";
+}
+
 // Verificar si se subió un archivo
 if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0) {
     $archivoTmp = $_FILES['archivo']['tmp_name'];
@@ -17,9 +30,6 @@ if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0) {
                 $columnas = array_map(function($col) {
                     return preg_replace('/[^a-zA-Z0-9_]/', '_', strtoupper(trim($col)));
                 }, $headers);
-
-                // Crear una tabla con nombre único (puedes cambiar esto)
-                $nombreTabla = 'tabla_csv_' . time();
 
                 // Crear SQL para la tabla
                 $sqlCreate = "CREATE TABLE `$nombreTabla` (";

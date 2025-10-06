@@ -38,7 +38,7 @@ require 'mapa.php';
                 <script src="subir.js"></script>
                 <div class="nombre_tabla">
                     <text class="texto">Ingrese nombre de tabla</text>
-                    <input class="input" type="text" name="nombre_tabla">
+                    <input type="text" name="nombre_tabla">
                 </div>
                 <button class="botonpag" type="submit">Subir</button>
             </form>
