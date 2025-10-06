@@ -1,4 +1,5 @@
 <?php
+
 //TABLA
 $tablaSeleccionada = $_POST['tabla'] ?? null;
 $filtros = $_POST['filtros'] ?? [];
@@ -51,12 +52,7 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
     if (!empty($where)) {
         $sql .= " WHERE " . implode(" AND ", $where);
     }
-/*
-    $sql="SELECT * FROM `$tablaSeleccionada`";
-    if(!empty($where)){
-        $sql .= " WHERE " . implode(" AND ",$where);
-    }
-*/
+
     $stmt=$conn->prepare($sql);
     $stmt->execute($params);
     $datos=$stmt->fetchALL(PDO::FETCH_ASSOC);

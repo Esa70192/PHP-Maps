@@ -1,6 +1,7 @@
 <?php
 
-require 'conexiondb.php';
+require_once 'conexiondb.php';
+require_once 'tablasdb.php';
 
 // Verificar si se subió un archivo
 if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0) {
@@ -11,6 +12,7 @@ if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0) {
             $headers = fgetcsv($handle, 1000, ','); // Leer la primera línea (cabecera)
 
             if ($headers) {
+                $headers[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headers[0]);
                 // Limpiar y preparar nombres de columnas
                 $columnas = array_map(function($col) {
                     return preg_replace('/[^a-zA-Z0-9_]/', '_', strtoupper(trim($col)));
@@ -38,71 +40,19 @@ if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0) {
                 }
                 fclose($handle);
 
-                /*************************************************** */
-                $tablaSeleccionada = $_POST['tabla'] ?? null;
-$filtros = $_POST['filtros'] ?? [];
-$datos = [];
-$columnas=[];
-                $campoId=NULL;
-                foreach ($columnas as $col) {
-                    if (preg_match('/^ID_/', $col)) {
-                    $campoId = $col;
-            break;
-        }
-    }
-    
-    $columnas_muestra=['CALLE', 'NUMERO','COLONIA'];
+                require 'conexiondb.php';
+                require 'tablasdb.php';
+                require 'mapa.php';
 
-    if($campoId!==NULL){
-        array_unshift($columnas_muestra, $campoId);
-    }
-
-    $columna_opcional=['DESCRIPCION','ACTIVIDAD','TIPO_ACTI','ESPECIE'];
-
-    $columna_opcional_valida = array_intersect($columna_opcional,$columnas);
-    $columnas_muestra = array_merge($columnas_muestra, $columna_opcional_valida);
-    
-    if (empty($columnas_muestra)) {
-        exit('No hay columnas válidas para mostrar en la tabla seleccionada.');
-        
-    }
-
-    $columnas_sql = implode(', ', array_map(fn($col) => "`$col`", $columnas_muestra));
-
-    $where=[];
-    $params=[];
-
-    foreach($columnas as $columna){
-        if(!empty($filtros[$columna])){
-            $where[]="`$columna`=:$columna";
-            $params[$columna]=$filtros[$columna];
-        }
-    }
-    
-    $sql = "SELECT $columnas_sql FROM `$tablaSeleccionada`";
-    if (!empty($where)) {
-        $sql .= " WHERE " . implode(" AND ", $where);
-    }
-
-    $stmt=$conn->prepare($sql);
-    $stmt->execute($params);
-    $datos=$stmt->fetchALL(PDO::FETCH_ASSOC);
-
-    $valoresUnicos=[];
-    foreach($columnas as $columna){
-        $stmt=$conn->prepare("SELECT DISTINCT `$columna` FROM `$tablaSeleccionada` ORDER BY `$columna`");
-        $stmt->execute();
-        $valoresUnicos[$columna]=$stmt->fetchALL(PDO::FETCH_COLUMN);
-    }
+                header("Location: pag_principal.php");
 
             } else {
                 echo "El archivo CSV está vacío o no tiene cabecera.";
             }
         } else {
             echo "No se pudo abrir el archivo.";
-        }
-    
-    } else {
-        echo "No se ha subido ningún archivo válido.";
-    }
+        }      
+} else {
+    echo "No se ha subido ningún archivo válido.";
+}
 ?>

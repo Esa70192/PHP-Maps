@@ -36,6 +36,10 @@ require 'mapa.php';
                 <input id="archivo" type="file" name="archivo" accept=".csv" onchange="mostrarNombre(this)">
                 <span class="filename" id="nombreArchivo">Ningún archivo seleccionado</span>
                 <script src="subir.js"></script>
+                <div class="nombre_tabla">
+                    <text class="texto">Ingrese nombre de tabla</text>
+                    <input class="input" type="text" name="nombre_tabla">
+                </div>
                 <button class="botonpag" type="submit">Subir</button>
             </form>
         </div>

@@ -1,11 +1,9 @@
 <?php
+
 //MAPA
-$tablasConCoords = [];
-$coordenadas = [];
 $campoId = '';
 $campoLat = '';
 $campoLng = '';
-
 
 if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
     //---------------MAPA------------------

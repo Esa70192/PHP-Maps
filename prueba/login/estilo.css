@@ -15,7 +15,7 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 html{
-  height: 100%;
+  height: auto;
   margin: 0;
   padding: 0;
 }
@@ -201,4 +201,7 @@ input[type="file"] {
 .filename {
     font-size: 1rem;
     color: var(--negro);
+}
+.nombre_tabla{
+  padding: 1rem;
 }
