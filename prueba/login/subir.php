@@ -6,6 +6,7 @@ require_once 'tablasdb.php';
 
 if (isset($_POST['nombre_tabla'])) {
     $nombre_ingresado = trim($_POST['nombre_tabla']);
+    $nombre_ingresado = substr($nombre_ingresado, 0, 63);
 
     // Validar que el nombre sea seguro (solo letras, números y guiones bajos)
     if (preg_match('/^[a-zA-Z0-9_]+$/', $nombre_ingresado)) {
@@ -44,10 +45,23 @@ if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0) {
             $headers = fgetcsv($handle, 1000, ','); // Leer la primera línea (cabecera)
 
             if ($headers) {
-                $headers[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headers[0]);
-                // Limpiar y preparar nombres de columnas
-                $columnas = array_map(function($col) {
-                    return preg_replace('/[^a-zA-Z0-9_]/', '_', strtoupper(trim($col)));
+                    $headers[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headers[0]);
+                    // Limpiar y preparar nombres de columnas
+                    $columnas = array_map(function($col) {
+                    $col = trim($col);
+                    $col = strtoupper($col);
+                    $col = preg_replace('/[^A-Z0-9_]/', '_', $col);
+                    $col = substr($col, 0, 64);
+
+                    $base = $col;
+                    $i = 1;
+                    while (isset($nombresUsados[$col])) {
+                        $col = substr("{$base}_{$i}", 0, 64); // evita pasarse de 64 chars
+                        $i++;
+                    }
+                    $nombresUsados[$col] = true;
+
+                    return $col;
                 }, $headers);
 
                 // Crear SQL para la tabla
