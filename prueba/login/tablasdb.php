@@ -7,9 +7,11 @@ $datos = [];
 $columnas=[];
 
 if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
+    
     $stmt = $conn->prepare("DESCRIBE `$tablaSeleccionada` ");
     $stmt->execute();
     $columnas = $stmt->fetchALL(PDO::FETCH_COLUMN);
+    
     
     $campoId=NULL;
 
@@ -33,10 +35,9 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
     
     if (empty($columnas_muestra)) {
         exit('No hay columnas válidas para mostrar en la tabla seleccionada.');
-        
     }
 
-    $columnas_sql = implode(', ', array_map(fn($col) => "`$col`", $columnas_muestra));
+    $columnas_sql = implode(', ', array_map(fn($col) => "`$col`", $columnas));
 
     $where=[];
     $params=[];

@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once 'conexiondb.php';
 require_once 'tablasdb.php';
@@ -8,12 +9,30 @@ if (isset($_POST['nombre_tabla'])) {
 
     // Validar que el nombre sea seguro (solo letras, números y guiones bajos)
     if (preg_match('/^[a-zA-Z0-9_]+$/', $nombre_ingresado)) {
-        $nombreTabla = $nombre_ingresado;
+        $sql = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = :db AND table_name = :tabla";
+        $stmt = $conn->prepare($sql);
+        $stmt -> execute([
+            'db' => $dbname,
+            'tabla' => $nombre_ingresado
+        ]);
+
+        $existe = $stmt->fetchColumn();
+        if($existe > 0) {
+            $_SESSION['error_nombre'] = "El nombre de tabla ya existe";
+            header("Location: pag_principal.php");
+            exit();
+        }else{
+            $nombreTabla = $nombre_ingresado;
+        }
     }else{
-        echo "❌ Nombre de tabla inválido. Solo se permiten letras, números y guión bajo.";
+        $_SESSION['error_nombre'] = "❌ Nombre de tabla inválido. Solo se permiten letras, números y guión bajo.";
+        header("Location: pag_principal.php");
+        exit();
     }
 }else{
-    echo "No se recibió ningún nombre de tabla.";
+    $_SESSION['error_nombre'] = "No se recibió ningún nombre de tabla.";
+    header("Location: pag_principal.php");
+    exit();
 }
 
 // Verificar si se subió un archivo

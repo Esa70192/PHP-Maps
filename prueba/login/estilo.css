@@ -57,7 +57,7 @@ body{
   overflow: auto; 
   font-size: 1rem;
   padding: 0.3rem;
-  width: 80%;
+  width: 98%;
   margin: auto;
   background-color: var(--grisblanco);
 }
@@ -177,10 +177,16 @@ th, td {
   display: flex;
   flex-direction: row;
 }
+.inicio{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .derecha{
   display: flex;
   justify-content: flex-end;
 }
+
 .subirarchivo{
   display: flex;
   justify-content: center;

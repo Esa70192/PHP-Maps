@@ -1,19 +1,8 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: pag_login.php");
-    exit();
-}
 
 require 'conexiondb.php';
 require 'tablasdb.php';
 require 'mapa.php';
-
-if (isset($_SESSION['error_nombre'])) {
-    $error = $_SESSION["error_nombre"];
-    unset($_SESSION['error_nombre']);
-}
 
 ?>
 
@@ -32,37 +21,16 @@ if (isset($_SESSION['error_nombre'])) {
     <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.20.0/maps/maps-web.min.js"></script>
 </head>
 <body>
-    <!--TABLA BD-->
+    <!--Conexion-->
     <?php if ($conexionExitosa): ?>
     <?php else: ?>
         <p class = "bd">Error al conectar: <?= $errorMensaje ?></p>
     <?php endif; ?>
 
-    <div class="encabezado">
-        <div class="izquierda">
-            <h3>Selecione el archivo</h3>
-            <form class="subirarchivo" action="subir.php" method="POST" enctype="multipart/form-data">
-                <label for="archivo" class="seleccion_arch">
-                    Seleccionar archivo
-                </label>
-                <input id="archivo" type="file" name="archivo" accept=".csv" onchange="mostrarNombre(this)">
-                <span class="filename" id="nombreArchivo">Ningún archivo seleccionado</span>
-                <script src="subir.js"></script>
-                <div class="nombre_tabla">
-                    <text class="texto">Ingrese nombre de tabla</text>
-                    <input type="text" name="nombre_tabla">
-                </div>
-                <button class="botonpag" type="submit">Subir</button>
-                <?php if(!empty($error)): ?>
-                    <p class="error"><?php echo $error; ?></p>
-                <?php endif; ?>
-            </form>
-        </div>
-        <div class="derecha">
-            <form class="form_cerrar" action="logout.php" method="POST">
-                <button class="botonpag" type="submit">Cerrar sesión</button>
-            </form>
-        </div>
+    <div class="inicio">
+        <form action="login.php" method="POST">
+            <button class="botonpag" type="submit">Iniciar sesion</button>
+        </form>
     </div>
     
     <h1 class="titulo">Sistema de Información</h1>
