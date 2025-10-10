@@ -28,7 +28,7 @@ require 'mapa.php';
     <?php endif; ?>
 
     <div class="inicio">
-        <form action="login.php" method="POST">
+        <form action="pag_login.php" method="POST">
             <button class="botonpag" type="submit">Iniciar sesion</button>
         </form>
     </div>
