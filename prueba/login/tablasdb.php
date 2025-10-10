@@ -22,13 +22,13 @@ if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
         }
     }
     
-    $columnas_muestra=['CALLE', 'NUMERO','COLONIA'];
+    $columnas_muestra=[];
 
     if($campoId!==NULL){
         array_unshift($columnas_muestra, $campoId);
     }
 
-    $columna_opcional=['DESCRIPCION','ACTIVIDAD','TIPO_ACTI','ESPECIE'];
+    $columna_opcional=['CALLE', 'NUMERO','COLONIA','DESCRIPCION','ACTIVIDAD','TIPO_ACTI','ESPECIE'];
 
     $columna_opcional_valida = array_intersect($columna_opcional,$columnas);
     $columnas_muestra = array_merge($columnas_muestra, $columna_opcional_valida);
