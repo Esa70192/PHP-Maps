@@ -1,0 +1,213 @@
+:root{
+  --color_titulos: #D4FF9C;
+  --gris: #C4C4C4;
+  --verde: #16DE2C;
+  --bverde: #5AED40;
+  --negro: #000000;
+  --azul: #27BBE3;
+  --azulgris: #92CEE0;
+  --verdeclaro: #E3F5BA;
+  --grisverde:#EEF2EB;
+  --grisblanco:#F3F5F0;
+  --azulclaro:#B3EAFC;
+  --azulfuerte:#8FB7C4;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+html{
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  background: linear-gradient(to bottom, var(--azulgris), var(--grisverde));
+}
+
+/*Configuracion del mapa*/
+#map {
+  width: 100%;
+  height: 31rem;
+}
+.custom-marker {
+  background-color: var(--verde);
+  color: var(--negro);
+  font-weight: bold;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  line-height: 2rem;
+  box-shadow: 0 0 4px rgba(0,0,0);
+}
+
+.ele_tabla{
+  background-color: var(--azulfuerte);
+  padding: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  height: 50%;
+  margin-top: 0.2rem;
+}
+
+/*Contenedor de la de tabla*/
+.contenedor_tabla { 
+  height: 31rem; 
+  border: 0.5rem solid var(--gris);
+  overflow: auto; 
+  font-size: 1rem;
+  padding: 0.3rem;
+  width: 98%;
+  margin: auto;
+  background-color: var(--grisblanco);
+}
+.tabla{
+  border-collapse: collapse;
+  width: 100%;
+}
+/*Filas y columnas de tabla*/
+th{
+  position: sticky;
+  top: 0;
+  background-color: var(--gris);
+  z-index: 1;
+}
+
+th, td {
+  font-size: 0.7rem;
+  border: 0.3rem solid var(--gris);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+/*Mensaje BD*/
+.bd{
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+/*Titulos*/
+.titulo{
+  text-align: center;
+  background-color: var(--azulclaro);
+  font-size: 2rem;
+}
+/*Texto*/
+.texto{
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.textoregistro{
+  text-align: center;
+}
+.error{
+  margin: 0 auto;
+  font-size: 1rem;
+  color: red;
+}
+.registro{
+  width: 50rem;
+  height: 50rem;
+  background-color: var(--azul);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin: 50px auto;
+  font-size: 1.5rem;
+}
+.contenedor_login{
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+.registrolog{
+  width: 30rem;
+  height: 30rem;
+  background-color: var(--azul);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin: 50px auto;
+  font-size: 1.5rem;
+}  
+.input{
+  background-color: var(--azulgris);
+  padding: 0.6rem;
+  border: none;
+  border-radius: 5px;
+  width: 100%;
+}
+.boton{
+  cursor: pointer;
+  background-color: var(--bverde);
+  padding: 0.6rem;
+  border: none;
+  border-radius: 5px;
+  width: 40%;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+.botonpag{
+  cursor: pointer;
+  background-color: var(--azulgris);
+  padding: 0.6rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+.form_registro{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 80%;
+}
+.encabezado{
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 0.7rem 0.7rem;
+}
+.izquierda {
+  display: flex;
+  flex-direction: row;
+}
+.inicio{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.derecha{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.subirarchivo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  padding: 0.5rem 0.5rem;
+}
+.seleccion_arch{
+  padding: 1rem 1rem;
+  cursor: pointer;
+  background-color: var(--azulgris);
+  color: var(--negro);
+  border-radius: 0.3rem;
+}
+input[type="file"] {
+    display: none;
+}
+.filename {
+    font-size: 1rem;
+    color: var(--negro);
+}
+.nombre_tabla{
+  padding: 1rem;
+}
