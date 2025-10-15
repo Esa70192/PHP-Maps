@@ -1,0 +1,96 @@
+¡Sí, puedes cambiar el color de los marcadores dependiendo del tipo (por ejemplo, poda, emergencias, contratos)! Para hacerlo, solo necesitas:
+
+Unificar los datos en un solo array (coordenadas) con información del tipo.
+
+Aplicar un color diferente según el tipo al crear el marcador.
+
+✅ Paso a paso
+💡 Supongamos que tienes el siguiente objeto PHP convertido a JavaScript:
+const datos = {
+    contratos: [
+        { id: 600, lat: 19.4006536, lng: -99.19119954 }
+    ],
+    emergencias: [
+        { id: 9396, lat: 19.4015752, lng: -99.18876599 }
+    ],
+    poda: [
+        { id: 185, lat: 19.4025356, lng: -99.19083863 }
+    ]
+};
+
+🔄 1. Transformar todos los datos a un solo array con tipo
+const coordenadas = [];
+
+for (const tipo in datos) {
+    datos[tipo].forEach(item => {
+        coordenadas.push({
+            id: item.id,
+            lat: item.lat,
+            lng: item.lng,
+            tipo: tipo
+        });
+    });
+}
+
+
+Ahora coordenadas es un array como este:
+
+[
+    { id: 600, lat: 19.4006536, lng: -99.19119954, tipo: 'contratos' },
+    { id: 9396, lat: 19.4015752, lng: -99.18876599, tipo: 'emergencias' },
+    { id: 185, lat: 19.4025356, lng: -99.19083863, tipo: 'poda' }
+]
+
+🎨 2. Agregar estilos según el tipo
+
+Primero define en tu CSS los colores:
+
+.custom-marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    line-height: 20px;
+}
+
+.contratos {
+    background-color: blue;
+}
+
+.emergencias {
+    background-color: red;
+}
+
+.poda {
+    background-color: green;
+}
+
+📍 3. Crear los marcadores con clases por tipo
+
+Sustituye tu bloque de marcadores por este:
+
+coordenadas.forEach(punto => {
+    if (punto.lat && punto.lng) {
+        const markerElement = document.createElement('div');
+        markerElement.className = `custom-marker ${punto.tipo}`; // clase por tipo
+        markerElement.textContent = punto.id;
+
+        new tt.Marker({ element: markerElement })
+            .setLngLat([parseFloat(punto.lng), parseFloat(punto.lat)])
+            .addTo(map);
+    }
+});
+
+✅ Resultado:
+
+Cada marcador tiene un color distinto según su tipo:
+
+poda: verde
+
+emergencias: rojo
+
+contratos: azul
+
+Todos aparecen correctamente en el mapa con su id como texto.
