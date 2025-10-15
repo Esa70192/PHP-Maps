@@ -1,5 +1,5 @@
 <?php
-
+require "conexiondb.php";
 $filtros = ['COLONIA', 'CALLE', 'NUMERO'];
 $datosTablas = [];
 $errores = '';
@@ -32,17 +32,35 @@ try {
         $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $datosTablas[$tabla] = $registros;
     
-    
-        //PARAMETROS DEL MAPA
-        $stmt = $conn->prepare("DESCRIBE `$tabla` ");
-        $stmt->execute();
-        $columnas = $stmt->fetchALL(PDO::FETCH_COLUMN);
-        
-        
-    
-    
-    
-    
+        $datosFiltrados = [];
+
+foreach ($datosTablas as $tabla => $registros) {
+    foreach ($registros as $registro) {
+        // Extraemos solo las columnas deseadas
+        $filaFiltrada = [];
+
+        foreach ($registro as $columna => $valor) {
+            if (
+                str_starts_with($columna, 'ID_') ||
+                $columna === 'LATITUD' ||
+                $columna === 'LONGITUD'
+            ) {
+                $filaFiltrada[$columna] = $valor;
+            }
+        }
+
+        // Solo agregamos si encontramos al menos una de las columnas esperadas
+        if (!empty($filaFiltrada)) {
+            $datosFiltrados[$tabla][] = $filaFiltrada;
+        }
+    }
+echo "<pre>\n";
+echo "Filtrados:\n";
+print_r($datosFiltrados);
+echo "</pre>\n";
+}
+
+
     }
 } catch (PDOException $e) {
     $errores = $e->getMessage();

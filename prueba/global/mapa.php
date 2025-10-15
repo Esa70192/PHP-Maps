@@ -6,14 +6,6 @@ $campoLat = '';
 $campoLng = '';
 
 if ($tablaSeleccionada && in_array($tablaSeleccionada, $tablas)) {
-    //---------------MAPA------------------
-    // Detectar nombre de columna ID (la primera que empiece con id_)
-    foreach ($columnas as $col) {
-        if (preg_match('/^ID_/', $col)) {
-            $campoId = $col;
-            break;
-        }
-    }
 
     // Detectar columnas de latitud y longitud
     foreach ($columnas as $col) {

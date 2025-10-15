@@ -6,10 +6,7 @@ if (!isset($_SESSION['usuario_id'])) {
     exit();
 }
 
-require 'conexiondb.php';
-//require 'tablasdb.php';
 require 'filtro.php';
-require 'mapa3.php';
 
 if (isset($_SESSION['error_nombre'])) {
     $error = $_SESSION["error_nombre"];
@@ -127,12 +124,28 @@ if (isset($_SESSION['error_nombre'])) {
     </div>
 
 
+<script>
+    const coordenadas = [];
+
+    <?php foreach ($datosFiltrados as $tabla => $filas): ?>
+        <?php foreach ($filas as $fila): ?>
+            coordenadas.push({
+                id: <?= json_encode(current(array_filter($fila, fn($k) => str_starts_with($k, 'ID_'), ARRAY_FILTER_USE_KEY)) ?? 'Sin ID') ?>,
+                lat: <?= json_encode($fila['LATITUD'] ?? null) ?>,
+                lng: <?= json_encode($fila['LONGITUD'] ?? null) ?>
+            });
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+</script>
+
+
+
 <!-------MAPA---------->
     <h2 class="titulo">Georeferenciación</h2>
 
      <div id="map"></div>
     <script>
-      const coordenadas = <?= json_encode($puntosMapa); ?>;
+      const coordenadas = <?= json_encode($datosFiltrados); ?>;
     </script>
     <script src="mapa.js"></script>                           
 
