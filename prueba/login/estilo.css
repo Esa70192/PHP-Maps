@@ -123,6 +123,7 @@ th, td {
   height: 100vh;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 .registrolog{
   width: 30rem;
@@ -135,13 +136,35 @@ th, td {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   margin: 50px auto;
   font-size: 1.5rem;
-}  
+} 
+.registrorecuperar{
+  width: 35rem;
+  height: 35rem;
+  background-color: var(--azul);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin: 50px auto 0px;
+  font-size: 1.5rem;
+}
+.regresarlogin{
+  display: flex;
+  margin-top: 0;
+  justify-content: center;
+  align-items: center;
+}
 .input{
   background-color: var(--azulgris);
   padding: 0.6rem;
   border: none;
   border-radius: 5px;
   width: 100%;
+}
+.olvide{
+  display: flex;
+  justify-content: center;
 }
 .boton{
   cursor: pointer;
@@ -160,6 +183,15 @@ th, td {
   border: none;
   border-radius: 5px;
   font-size: 1rem;
+}
+.botonpagre{
+  cursor: pointer;
+  background-color: var(--bverde);
+  padding: 0.6rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
 }
 .form_registro{
   display: flex;
