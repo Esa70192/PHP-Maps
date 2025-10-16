@@ -30,7 +30,7 @@ body{
   height: 31rem;
 }
 .custom-marker {
-  background-color: var(--verde);
+  /*background-color: var(--verde);*/
   color: var(--negro);
   font-weight: bold;
   border-radius: 50%;
@@ -40,6 +40,7 @@ body{
   line-height: 2rem;
   box-shadow: 0 0 4px rgba(0,0,0);
 }
+
 
 .ele_tabla{
   background-color: var(--azulfuerte);

@@ -54,17 +54,18 @@ foreach ($datosTablas as $tabla => $registros) {
             $datosFiltrados[$tabla][] = $filaFiltrada;
         }
     }
-echo "<pre>\n";
-echo "Filtrados:\n";
-print_r($datosFiltrados);
-echo "</pre>\n";
 }
 
 
     }
+    /*echo "<pre>\n";
+echo "Filtrados:\n";
+print_r($datosFiltrados);
+echo "</pre>\n";*/
 } catch (PDOException $e) {
     $errores = $e->getMessage();
 }
+
 
 
 ?>

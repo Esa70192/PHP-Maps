@@ -132,7 +132,8 @@ if (isset($_SESSION['error_nombre'])) {
             coordenadas.push({
                 id: <?= json_encode(current(array_filter($fila, fn($k) => str_starts_with($k, 'ID_'), ARRAY_FILTER_USE_KEY)) ?? 'Sin ID') ?>,
                 lat: <?= json_encode($fila['LATITUD'] ?? null) ?>,
-                lng: <?= json_encode($fila['LONGITUD'] ?? null) ?>
+                lng: <?= json_encode($fila['LONGITUD'] ?? null) ?>,
+                tipo:  <?= json_encode($tabla) ?>
             });
         <?php endforeach; ?>
     <?php endforeach; ?>
@@ -144,10 +145,8 @@ if (isset($_SESSION['error_nombre'])) {
     <h2 class="titulo">Georeferenciación</h2>
 
      <div id="map"></div>
-    <script>
-      const coordenadas = <?= json_encode($datosFiltrados); ?>;
-    </script>
-    <script src="mapa.js"></script>                           
+    
+    <script src="mapa1.js"></script>                           
 
 </body>
 </html>
