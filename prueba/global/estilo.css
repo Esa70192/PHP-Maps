@@ -188,6 +188,38 @@ th, td {
   justify-content: flex-end;
 }
 
+.menu_desplegable {
+  position: relative;
+  display: inline-block;
+}
+.boton_menu {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+.opciones {
+  display: none;
+  position: absolute;
+  min-width: 160px;
+  background-color: #f1f1f1;
+  /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;*/
+}
+.opciones a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.opciones a:hover {
+  background-color: #ddd;
+}
+.menu_desplegable:hover .opciones {
+  display: block;
+}
+
 .subirarchivo{
   display: flex;
   justify-content: center;
