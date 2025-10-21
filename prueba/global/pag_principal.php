@@ -17,7 +17,7 @@ if (isset($_SESSION['error_nombre'])) {
 
 <!DOCTYPE html>
 <html lang="es">
-
+<!--prue-->
 <head>
     <meta charset="UTF-8">
     <title>Tablas</title>
@@ -37,7 +37,9 @@ if (isset($_SESSION['error_nombre'])) {
     <?php endif; ?>
 
     <div class="encabezado">
+        
         <div class="izquierda">
+            <!--
             <h3>Selecione el archivo</h3>
             <form class="subirarchivo" action="subir.php" method="POST" enctype="multipart/form-data">
                 <label for="archivo" class="seleccion_arch">
@@ -51,10 +53,32 @@ if (isset($_SESSION['error_nombre'])) {
                     <input type="text" name="nombre_tabla">
                 </div>
                 <button class="botonpag" type="submit">Subir</button>
-                <?php if(!empty($error)): ?>
+                <"?php if(!empty($error)): ?>
                     <p class="error"><?php echo $error; ?></p>
-                <?php endif; ?>
-            </form>
+                <"?php endif; ?>
+            </form>-->
+                    <div class="menu_desplegable">
+                <button class="boton_menu">Menú</button>
+                <div class="opciones">
+                    <form class="subirarchivo" action="subir.php" method="POST" enctype="multipart/form-data">
+                        <label for="archivo" class="seleccion_arch">
+                            Subir archivo
+                        </label>
+                        <input id="archivo" type="file" name="archivo" accept=".csv" onchange="mostrarNombre    (this)">
+                        <span class="filename" id="nombreArchivo">Ningún archivo seleccionado</span>
+                        <script src="subir.js"></script>
+                        <div class="nombre_tabla">
+                            <text class="texto">Ingrese nombre de tabla</text>
+                            <input type="text" name="nombre_tabla">
+                        </div>
+                        <button class="botonpag" type="submit">Subir</button>
+                        <?php if(!empty($error)): ?>
+                            <p class="error"><?php echo $error; ?></p>
+                        <?php endif; ?>
+                    </form>
+                </div>
+                
+            </div>
         </div>
         <div class="derecha">
             <form class="form_cerrar" action="logout.php" method="POST">
@@ -62,6 +86,8 @@ if (isset($_SESSION['error_nombre'])) {
             </form>
         </div>
     </div>
+
+
     
     <h1 class="titulo">Sistema de Información</h1>
     
