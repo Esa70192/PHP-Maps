@@ -17,7 +17,7 @@ if (isset($_SESSION['error_nombre'])) {
 
 <!DOCTYPE html>
 <html lang="es">
-
+<!--prue-->
 <head>
     <meta charset="UTF-8">
     <title>Tablas</title>
