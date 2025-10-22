@@ -57,10 +57,10 @@ if (isset($_SESSION['error_nombre'])) {
                     <p class="error"><?php echo $error; ?></p>
                 <"?php endif; ?>
             </form>-->
-                    <div class="menu_desplegable">
-                <button class="boton_menu">Menú</button>
-                <div class="opciones">
-                    <form class="subirarchivo" action="subir.php" method="POST" enctype="multipart/form-data">
+                <div class="menu_desplegable">
+                    <button class="boton_menu" onclick="toggleMenu()">Menú</button>
+                    <div class="opciones" id="menuOpciones">
+                        <form class="subirarchivo" action="subir.php" method="POST" enctype="multipart/form-data">
                         <label for="archivo" class="seleccion_arch">
                             Subir archivo
                         </label>
@@ -79,6 +79,21 @@ if (isset($_SESSION['error_nombre'])) {
                 </div>
                 
             </div>
+            <script>
+  function toggleMenu() {
+    const menu = document.getElementById("menuOpciones");
+    menu.classList.toggle("mostrar");
+  }
+
+  // Opcional: Cierra el menú si haces clic fuera de él
+  window.addEventListener("click", function(e) {
+    const boton = document.querySelector(".boton_menu");
+    const menu = document.getElementById("menuOpciones");
+    if (!boton.contains(e.target) && !menu.contains(e.target)) {
+      menu.classList.remove("mostrar");
+    }
+  });
+</script>
         </div>
         <div class="derecha">
             <form class="form_cerrar" action="logout.php" method="POST">
@@ -169,10 +184,12 @@ if (isset($_SESSION['error_nombre'])) {
 
 <!-------MAPA---------->
     <h2 class="titulo">Georeferenciación</h2>
-
-     <div id="map"></div>
     
-    <script src="mapa1.js"></script>                           
+    <div id="infoTipos"></div>
+
+    <div id="map"></div>
+    
+    <script src="mapa1.js"></script>
 
 </body>
 </html>

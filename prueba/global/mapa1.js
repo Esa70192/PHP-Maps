@@ -11,6 +11,7 @@ map.addControl(new tt.NavigationControl());
 console.log(coordenadas);
 
 const tipoColores = {};
+const contenedor = document.getElementById('infoTipos');
 const coloresUsados = new Set();
 
 // Función para generar un color aleatorio (sin repetir)
@@ -25,11 +26,11 @@ function generarColorAleatorio() {
 
 coordenadas.forEach(punto => {
     if (punto.lat && punto.lng) {
-        console.log('Tipo:', punto.tipo);
         // Paso 2: Asignar color si el tipo aún no tiene uno
         if (!tipoColores[punto.tipo]) {
             tipoColores[punto.tipo] = generarColorAleatorio();
         }
+        console.log('Tipo: ', punto.tipo, tipoColores)
 
         // Paso 3: Crear el marcador
         const markerElement = document.createElement('div');
@@ -44,3 +45,10 @@ coordenadas.forEach(punto => {
             .addTo(map);
     }
 });
+
+for (const tipo in tipoColores) {
+  const color = tipoColores[tipo];
+  const p = document.createElement('p');
+  p.innerHTML = `Tipo: ${tipo} - Color: <span style="display:inline-block;width:20px;height:20px;background:${color};border:1px solid #000;"></span>`;
+  contenedor.appendChild(p);
+}
