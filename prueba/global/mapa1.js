@@ -30,7 +30,7 @@ coordenadas.forEach(punto => {
         if (!tipoColores[punto.tipo]) {
             tipoColores[punto.tipo] = generarColorAleatorio();
         }
-        console.log('Tipo: ', punto.tipo, tipoColores)
+        //console.log('Tipo: ', punto.tipo, tipoColores)
 
         // Paso 3: Crear el marcador
         const markerElement = document.createElement('div');
@@ -49,6 +49,6 @@ coordenadas.forEach(punto => {
 for (const tipo in tipoColores) {
   const color = tipoColores[tipo];
   const p = document.createElement('p');
-  p.innerHTML = `Tipo: ${tipo} - Color: <span style="display:inline-block;width:20px;height:20px;background:${color};border:1px solid #000;"></span>`;
+  p.innerHTML = `Tabla: ${tipo} - Color: <span style="display:inline-block;width:20px;height:20px;background:${color};border:1px solid #000;"></span>`;
   contenedor.appendChild(p);
 }

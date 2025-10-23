@@ -29,8 +29,10 @@ if (isset($_SESSION["login_error"])) {
                     <p class="error"><?php echo $error; ?></p>
                 <?php endif; ?>
                 <!--<button class="boton" onclick="window.location.href='pag_signup.php'">Registrarme.</button>-->
+                <a class="olvide" href="pag_recuperar.php">¿Olvidaste tu contraseña?</a>
             </form>
         </div>
+    <button class="botonpagre" onclick="window.location.href='index.php'">Volver a pagina principal</button>
     </div>
 </body>
-</html>
+</html>|
